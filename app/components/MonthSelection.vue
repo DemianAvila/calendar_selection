@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="h-full">
         <label for="month"
-        class="text-[#f9f9f9]">
+        class="text-[#f9f9f9] text-sm">
             Select a month
         </label>
         <Dropdown id="month"

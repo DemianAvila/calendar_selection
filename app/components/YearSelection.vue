@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="h-full">
         <label for="year"
-        class="text-[#f9f9f9]">
+        class="text-[#f9f9f9] text-sm">
             Select a year
         </label>
         <InputNumber id="year"

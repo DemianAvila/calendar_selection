@@ -1,14 +1,15 @@
 <template>
     <div class="w-full h-full bg-[#086740] text-[#f9f9f9] rounded flex flex-col">
-        <div class="w-[100%] flex flex-row justify-center items-center">
-            <div class="w-[14.28%] p-2 flex flex-row justify-center items-center" v-for="day in weekdays" :key="day.code">
+        <div class="w-full h-[15%] flex flex-row justify-center items-center">
+            <div class="w-[14.28%] h-full flex flex-row justify-center items-center" v-for="day in weekdays" :key="day.code">
                 {{ day.shortCode }}
             </div>
         </div>
-        <div class="w-[100%] flex flex-row p-2" v-if="monthCalendar" v-for="(week, index) in splitMonthWeeks()" :key="index"> 
-            <div class="w-[14.28%] px-2" v-for="i in 7" :key="i" >
-                {{ Object.keys(week[i-1]) }}
-                <DayController :day="week[i-1]" v-if="week[i-1] === i"/>
+        <div class="w-full h-[75%] flex flex-col justify-center items-center " v-if="monthCalendar">
+            <div class="w-full h-full flex flex-row justify-stretch items-stretch" v-for="(week, index) in weeks_list" :key="index"> 
+                <div class="w-[14.28%] h-full " v-for="i in 7" :key="i">
+                    <DayController :parentData="calendarDay(i, week)" />
+                </div>
             </div>
         </div>
         <div class="w-[100%] h-[95%] flex flex-row justify-center items-center" v-else >
@@ -19,7 +20,6 @@
 </template>
 
 <script>
-    import Day from '../src/object_logic/day.ts'
     export default {
         props: ['monthCalendar'],
         data () {
@@ -33,35 +33,32 @@
                     { name: 'Saturday', shortCode: 'Sat', code: '6' },
                     { name: 'Sunday', shortCode: 'Sun', code: '7' }
                 ], 
-                calendar: null
+                calendar: null,
+                weeks: null,
+                weeks_list: null
             }
         },
         methods: {
-            splitMonthWeeks() {
-                let cal = this.monthCalendar;
-                /********************** 
-                let weeks = [];
-                let week = [];
-                let weekBegin = 1;
-                let weekMonthStart = cal[0].getWeekday().id;
-                let current_day = cal[0].day;
-                let fillWeek = []
-                for (weekBegin; weekBegin < weekMonthStart ; weekBegin++) {
-                    current_day = current_day.minus({ days: 1 })
-                    fillWeek.push(new Day(
-                        current_day,
-                        false, 
-                        false, 
-                        false, 
-                        false,
-                        false,
-                        { id: current_day.weekday, dayName: current_day.weekdayLong }
-                    ));
+            calendarDay(weekday, week) {
+                let day = week.find(day => day.getWeekday().id == weekday);
+                if (day) {
+                    return {
+                        "render": true,
+                        "day": day,
+                    };
                 }
-                fillWeek = fillWeek.reverse();
-                cal = fillWeek.concat(cal);
-                ***********************/
-
+                else {
+                    return {
+                        "render": false,
+                        "day": null,
+                    };
+                }
+            }
+        },
+        mounted() {
+            let cal = []
+                cal = this.monthCalendar;
+                console.log(cal)
                 let weeks = [];
                 let week = [];
 
@@ -74,10 +71,10 @@
                 }
                 weeks.push(week);
                 week = [];
-                console.log(weeks)
-                return weeks;
-            }
+                this.weeks = weeks.length;
+                this.weeks_list = weeks;
         }
     }
+
 </script>
   

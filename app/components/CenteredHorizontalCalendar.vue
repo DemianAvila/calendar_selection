@@ -1,24 +1,28 @@
 <template>
-    <div class="w-[80%] h-[80%] bg-[#13271b] text-[#f9f9f9] rounded p-4 flex flex-col">
-        <div class="w-full h-[20%] flex flex-row justify-center">
+    <div class="w-[80%] h-[80%] bg-[#13271b] text-[#f9f9f9] rounded p-4 flex flex-col  items-center">
+        <div class="w-full h-[20%] flex flex-row justify-around">
             <MonthSelection 
-            class="w-[50%] h-full m-3"
-            @setMonth="setMonth" 
+            class="w-[30%] h-full"
+            @setMonth="setCalendar($event, null)" 
             :defaultMonth="calendar.getCurrentCalendar().month" />
             <YearSelection 
-            class="w-[50%] h-full m-3"
-            @setYear="setYear" 
+            class="w-[30%] h-full"
+            @setYear="setCalendar(null ,$event)" 
             :defaultYear="calendar.getCurrentCalendar().year"/> 
         </div>
-        <div class="w-full h-[70%] flex flex-row justify-center">
+        <div class="w-[90%] h-[65%] flex flex-col justify-center">
+            <TabMenu :model="[ { label: 'Dashboard', icon: 'pi pi-home' }]" />
             <CalendarTable :monthCalendar="currentCalendar" v-if="currentCalendar"/>
+            <ProgressSpinner v-else  />
+        </div>
+        <div class="w-[90%] h-[15%] flex flex-row justify-center">
+            <DateStringPricker/>
         </div>
     </div>
 </template>
 
 <script>
     import Calendar from '../src/object_logic/calendar.ts'
-    import Day from '../src/object_logic/day.ts'
     export default {
         data () {
             return {
@@ -27,19 +31,12 @@
             }
         },
         methods: {
-            setMonth(val) {
+            async setCalendar(month = null, year = null){
                 this.currentCalendar = null
+                await new Promise(resolve => setTimeout(resolve, 100));
                 this.calendar.setCurrentCalendar({
-                    month: parseInt(val.code), 
-                    year: this.calendar.getCurrentCalendar().year
-                })
-                this.currentCalendar = this.calendar.getCurrentMonthCalendar()
-            },
-            setYear(val) {
-                this.currentCalendar = null
-                this.calendar.setCurrentCalendar({
-                    month: this.calendar.getCurrentCalendar().month,
-                    year: val
+                    month: month ? parseInt(month.code) : this.calendar.getCurrentCalendar().month,
+                    year: year ? parseInt(year) : this.calendar.getCurrentCalendar().year
                 })
                 this.currentCalendar = this.calendar.getCurrentMonthCalendar()
             }
